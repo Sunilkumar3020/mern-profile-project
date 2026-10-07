@@ -7,6 +7,8 @@ import connectDB from "./src/config/db.js";
 
 import profileRoutes from "./src/routes/profileRoutes.js"
 
+import authRoute from "./src/routes/authRoutes.js"
+
 configDotenv({ path: "./.env" })
 
 const app = express()
@@ -17,7 +19,9 @@ app.use(cors({ origin: "http://localhost:5173" }))
 
 app.use(express.json())
 
-app.use("/api/profiles/", profileRoutes)
+app.use('/api/auth', authRoute)
+app.use("/api/profiles/", profileRoutes);
+
 
 app.get("/", (req, res) => {
     res.json({ message: "Profile API is running" })
