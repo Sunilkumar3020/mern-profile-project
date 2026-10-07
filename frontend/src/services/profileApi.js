@@ -1,6 +1,12 @@
 const API_URL = "http://localhost:5000/api/profiles";
 
 
+
+
+
+
+
+
 // get all profiles
 
 export const getProfiles = async()=>{
