@@ -4,15 +4,31 @@ import EditProfile from "./pages/EditProfile.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
 import ProfileCard from "./components/ProfileCard.jsx";
 
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+
 import "./index.css"
 
 export default function App() {
 
   const [page, setPage] = useState("home");
+  const [user, setUser] = useState(null)
   const [profiles, setProfiles] = useState([]);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [pendingProfile, setPendingProfile] = useState(null)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("")
+
+
+  // restore the user after browser refresh
+
+  useEffect(() => {
+
+    const storedUser = localStorage.getItem("user")
+    if (storedUser) {
+      setUser(JSON.parse(storedUser))
+    }
+  }, [])
 
   // Load all profiles
 
@@ -41,6 +57,11 @@ export default function App() {
   //view profile
 
   const handleViewProfile = (profile) => {
+    if (!user) {
+      setPendingProfile(profile)
+      setPage("login");
+      return
+    }
     setSelectedProfile(profile)
     setPage("profile")
   }
@@ -112,11 +133,51 @@ export default function App() {
     )
   }
 
+  // login 
+
+  const handleLogin = (loggedInUser) => {
+    setUser(loggedInUser);
+    if (pendingProfile) {
+      setSelectedProfile(pendingProfile);
+      setPendingProfile(null);
+      setPage("profile")
+    } else {
+
+      setPage("home")
+    }
+  }
+
+  // handle logout
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    setSelectedProfile(null)
+    setPage("home")
+  }
+
+  if (page === "login") {
+    return (
+      <Login onLogin={handleLogin} onRegister={() => setPage("register")} />
+    )
+  }
+  if (page === "register") {
+    return (
+      <Register onRegisterSuccess={() => setPage("login")} onLogin={() => setPage("login")} />
+    )
+  }
   //Home
 
   return (
     <div className="app">
       <h1>MERN Profile</h1>
+      {user ? (
+        <div><p>Welcome, {user.name}</p> <button onClick={handleLogout}>Logout</button></div>
+      ) : (<div>
+        <button onClick={() => setPage("login")} >Login</button>
+        <button onClick={() => setPage("register")}> Register</button>
+      </div>)}
       <h2>All Profiles</h2>
       {
         profiles.length === 0 ? (<p>No Profiles found.</p>) : (
