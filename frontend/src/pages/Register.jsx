@@ -1,11 +1,33 @@
 import { useState } from "react"
 
+import { registerUser } from "../services/authApi.js";
+
 export default function Register({ onRegisterSuccess, onLogin }) {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState()
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            setLoading(true)
+            setError("")
+            await registerUser({ name, email, password })
+            setName('')
+            setEmail('')
+            setPassword('')
+            onRegisterSuccess()
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setLoading(false)
+        }
+
+    }
+
     return (
         <div className="auth-page">
             <h1>Register</h1>
@@ -15,7 +37,7 @@ export default function Register({ onRegisterSuccess, onLogin }) {
 
                 <input type="email" placeholder="Email" value={email} name="email" onChange={e => setEmail(e.target.value)} />
 
-                <input type="password" name="password" value={password} onChange={e => setPassword(e.target.value)} />
+                <input type="password" name="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
 
                 {error && <p>{error}</p>}
                 <button type="submit" disabled={loading}  >{loading ? "Registering..." : "Register"}</button>

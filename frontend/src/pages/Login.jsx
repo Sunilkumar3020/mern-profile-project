@@ -2,11 +2,11 @@ import { useState } from "react"
 
 import { loginUser } from "../services/authApi.js"
 
-export default function Login() {
+export default function Login({ onLogin, onRegister }) {
 
     const [password, setPassword] = useState('')
     const [email, setEmail] = useState("")
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const handleSubmit = async (e) => {
         e.preventDefault();

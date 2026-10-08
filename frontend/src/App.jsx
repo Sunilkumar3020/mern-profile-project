@@ -59,7 +59,7 @@ export default function App() {
   const handleViewProfile = (profile) => {
     if (!user) {
       setPendingProfile(profile)
-      setPage("login");
+      setPage("register");
       return
     }
     setSelectedProfile(profile)
